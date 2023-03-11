@@ -228,6 +228,8 @@ def ConvertStart(code: string): string
 	return v:char
 enddef
 
+var sprevword: string = '五笔输入法'
+
 def Finalize(code: string, chari: string): string
 	popup_close(popid)
 	popid = -1
@@ -251,6 +253,8 @@ def Finalize(code: string, chari: string): string
 		else
 			v:char = lcand[lidx]
 		endif
+
+		sprevword = v:char
 	endif
 
 	return v:char
@@ -265,6 +269,8 @@ def GetCandidates(code: string, padding: bool = v:false): list<string>
 
 	if has_key(tabledict, code)
 		lcand = tabledict[code]
+	elseif code == 'z'
+		lcand = [sprevword]
 	endif
 
 	if len(lcand) > 10
