@@ -19,6 +19,27 @@ var tabledict: dict<list<string>> = {}
 const im_valid_keys = split('a b c d e f g h i j k l m n o p q r s t u v w x y z')
 const im_select_keys = [' ', ';', "'", ',', '5', '6', '7', '8', '9', '0']
 
+var vimimconfig: dict<any> = {
+	horizontal: true,
+	gb2312: true,
+	showlogo: true,
+	temp_english_key: '`',
+	disable_chinese_punct: false,
+	toggle_chinese_punct: "\<C-l>",
+	chinese_puncts: {
+		',': '，',
+		'.': '。',
+		':': '：',
+		';': '；',
+		'?': '？',
+		'!': '！',
+		'\': '、',
+		'^': '……',
+		'_': '——',
+		}
+}
+	# trim_english_word: true,
+
 # ┌──────────────────┐
 # │                  │
 # └──────────────────┘
@@ -39,26 +60,6 @@ var vimim_enabled: bool = false
 
 highlight imBorder	ctermfg=250 ctermbg=Cyan guifg=#80A0FF guibg=#263A45
 highlight imCode	ctermfg=168 ctermbg=Cyan guifg=#DC657D guibg=#263A45
-
-var vimimconfig: dict<any> = {
-	horizontal: true,
-	gb2312: true,
-	temp_english_key: '`',
-	disable_chinese_punct: false,
-	toggle_chinese_punct: "\<C-l>",
-	chinese_puncts: {
-		',': '，',
-		'.': '。',
-		':': '：',
-		';': '；',
-		'?': '？',
-		'!': '！',
-		'\': '、',
-		'^': '……',
-		'_': '——',
-		}
-}
-	# trim_english_word: true,
 
 export def LoadTable(force: bool = v:false)
 	if force
@@ -85,18 +86,20 @@ export def LoadTable(force: bool = v:false)
 enddef
 
 export def Enable(): number
-    set iminsert=2
-    logoid = popup_create('五笔', {
-			line: winheight(0) - 1,
-			col: winwidth(0) - 10,
-			zindex: 300,
-			highlight: 'imBorder',
-			border: [],
-			borderchars: ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
-			padding: [0, 1, 0, 1],
-			wrap: false,
-		})
-    redraw
+    setlocal iminsert=2
+	if vimimconfig.showlogo
+		logoid = popup_create('五笔', {
+				line: winheight(0) - 1,
+				col: winwidth(0) - 10,
+				zindex: 300,
+				highlight: 'imBorder',
+				border: [],
+				borderchars: ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+				padding: [0, 1, 0, 1],
+				wrap: false,
+			})
+		redraw
+	endif
 
 	vimim_enabled = true
 	if vimimconfig.horizontal
@@ -121,16 +124,12 @@ export def Enable(): number
 enddef
 
 export def Toggle(stauts: number)
-	if vimim_enabled
-		if !stauts
-			set iminsert=0
-			set iminsert?
-		else
-			if logoid > 0
-				set iminsert=2
-				set iminsert?
-			endif
-		endif
+	if !stauts
+		setlocal iminsert=0
+		setlocal iminsert?
+	else
+		setlocal iminsert=2
+		setlocal iminsert?
 
 	endif
 enddef
@@ -138,7 +137,7 @@ enddef
 export def Disable()
 	if vimim_enabled
 		popup_clear()
-		set iminsert=0
+		setlocal iminsert=0
 		vimim_enabled = false
 		logoid = -1
 		popid = -1
