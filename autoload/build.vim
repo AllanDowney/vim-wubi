@@ -57,7 +57,7 @@ export def BuildTable(): dict<list<string>>
 	return table_dict
 enddef
 
-def ReadToDict(txtfile: string): dict<any>
+def ReadToDict(txtfile: string): dict<list<list<string>>>
 	var table_dict = {}
 
 	for line in readfile(txtfile)
@@ -75,7 +75,8 @@ def ReadToDict(txtfile: string): dict<any>
 	return table_dict
 enddef
 
-def ExtendD(base: dict<any>, secondd: dict<any>): dict<any>
+def ExtendD(base: dict<list<list<string>>>, secondd: dict<list<list<string>>>):
+		\ dict<list<list<string>>>
 	for [key, value] in items(secondd)
 		if has_key(base, key)
 			extend(base[key], value->deepcopy())
