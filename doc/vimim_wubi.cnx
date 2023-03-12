@@ -3,8 +3,7 @@
 1. 配置						|g:Vimim_config|
 2. 命令						|Vimim_command|
     2.1 创建码表				|Vimim_ImBuild|
-    2.2 加载码表				|Vimim_ImLoad|
-    2.3 编辑码表				|Vimim_ImEdit|
+    2.2 编辑码表				|Vimim_ImEdit|
 3. 快捷键					|Vimim_maps|
 4. 码表文件					|Vimim_table|
 5. 更新历史					|Vimim_history|
@@ -62,10 +61,6 @@ Vimim-wubi 是使用 |vim9script| 编写的五笔输入法，使用了 |InsertCh
 							*Vimim_ImBuild*
 `ImBuild` 从 "vimim_wubi/table" 目录下加载词库文本文件，生成 "wubi86.json" 文件，
 并加载词库
-
-							*Vimim_ImLoad*
-`ImLoad` 读取 "wubi86.json" 文件，加载词库。如果 "wubi86.json" 文件不存在，使用
-`ImBuild` 命令重新生成，并加载词库
 
 							*Vimim_ImEdit*
 `ImEdit` 编辑词库文件文件。零个或一个参数：

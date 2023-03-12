@@ -7,7 +7,7 @@ vim9script
 #   Author        : Allan Downey<AllanDowney@126.com>
 #   Version       : 0.2
 #   Create        : 2023-02-28 23:18
-#   Last Modified : 2023-03-12 02:49
+#   Last Modified : 2023-03-12 11:29
 #   Describe      : 
 #
 # =========================================================
@@ -38,11 +38,7 @@ var vimimconfig: dict<any> = {
 		'_': '——',
 		}
 }
-	# trim_english_word: true,
 
-# ┌──────────────────┐
-# │                  │
-# └──────────────────┘
 var popopt_wubi: dict<any> = {
 		pos: 'topleft',
 		border: [],
@@ -61,28 +57,23 @@ var vimim_enabled: bool = false
 highlight imBorder	ctermfg=250 ctermbg=Cyan guifg=#80A0FF guibg=#263A45
 highlight imCode	ctermfg=168 ctermbg=Cyan guifg=#DC657D guibg=#263A45
 
-export def LoadTable(force: bool = v:false)
-	if force
-		tabledict = {}
+export def LoadTable()
+	var ljson = expand('<script>:p:h:h') .. '/table/wubi86.json'
+	if filereadable(ljson)
+		tabledict = js_decode(readfile(ljson)[0])
+	else
 		tabledict = build.BuildTable()
-	elseif empty(tabledict)
-		var ljson = expand('<script>:p:h:h') .. '/wubi86.json'
-		if filereadable(ljson)
-			tabledict = js_decode(readfile(ljson)[0])
-		else
-			tabledict = build.BuildTable()
-		endif
 	endif
 
 	if !empty(g:->get('Vimim_config'))
 		extend(vimimconfig, g:Vimim_config, "force")
 	endif
 
-	echohl Statement
-	echomsg '[VIMIM] - table length:' (len(tabledict)) ' type:'
-				\ (typename(tabledict))
-	echohl None
-	echo ''
+enddef
+
+export def RebuildTable()
+		tabledict = {}
+		tabledict = build.BuildTable()
 enddef
 
 export def Enable(): number

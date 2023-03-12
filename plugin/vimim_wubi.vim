@@ -7,7 +7,7 @@ vim9script
 #   Author        : Allan Downey<AllanDowney@126.com>
 #   Version       : 0.2
 #   Create        : 2023-02-28 23:18
-#   Last Modified : 2023-03-12 02:49
+#   Last Modified : 2023-03-12 11:30
 #   Describe      : 
 #
 # =========================================================
@@ -27,13 +27,12 @@ augroup Vimim
     autocmd BufReadPre */table/*.txt setlocal ts=16 list
 augroup END
 
-command -nargs=0 ImBuild vimim#LoadTable(true)
-command -nargs=0 ImLoad vimim#LoadTable()
+command -nargs=0 ImBuild vimim#RebuildTable()
 command -nargs=0 ImDisable vimim#Disable()
 command -complete=custom,WhFile -nargs=? ImEdit build#EditTable(<q-args>)
 
 func WhFile(A, L, P)
-	return "wubi86_zh.txt\nwubi86_dz.txt\ncustom.txt"
+	return "custom.txt\nwubi86_dz.txt\nwubi86_zh.txt"
 endfunc
 
 inoremap <Plug>(VimimStart) <Cmd>call vimim#Enable()<CR>
