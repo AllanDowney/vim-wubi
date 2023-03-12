@@ -5,7 +5,7 @@ vim9script
 #
 #   File Name     : vimim_wubi.vim
 #   Author        : Allan Downey<AllanDowney@126.com>
-#   Version       : 0.2
+#   Version       : 0.3
 #   Create        : 2023-02-28 23:18
 #   Last Modified : 2023-03-12 11:30
 #   Describe      : 
@@ -30,6 +30,7 @@ augroup END
 command -nargs=0 ImBuild vimim#RebuildTable()
 command -nargs=0 ImDisable vimim#Disable()
 command -complete=custom,WhFile -nargs=? ImEdit build#EditTable(<q-args>)
+command -nargs=1 ImCreate vimim#CreateWords(<q-args>)
 
 func WhFile(A, L, P)
 	return "custom.txt\nwubi86_dz.txt\nwubi86_zh.txt"
@@ -39,6 +40,7 @@ inoremap <Plug>(VimimStart) <Cmd>call vimim#Enable()<CR>
 inoremap <Plug>(VimimStop) <Cmd>ImDisable<CR>
 nnoremap <Plug>(VimimStop) <Cmd>ImDisable<CR>
 nnoremap <Plug>(VimimEdit) <Cmd>ImEdit<CR>
+vnoremap <Plug>(VimimCreate) <Cmd>call vimim#CreateWords(expand('<cword>'))<CR>
 
 if !hasmapto('<Plug>(VimimStart)', 'i')
 	inoremap  <Leader>im <Plug>(VimimStart)
@@ -52,8 +54,12 @@ if !hasmapto('<Plug>(VimimStop)', 'n')
 	nnoremap  <Leader>im <Plug>(VimimStop)
 endif
 
-if !hasmapto('<Plug>(VimimEdit)')
+if !hasmapto('<Plug>(VimimEdit)', 'n')
 	nnoremap <Leader>ie <Plug>(VimimEdit)
+endif
+
+if !hasmapto('<Plug>(VimimCreate)', 'v')
+	vnoremap  <Leader>ic <Plug>(VimimCreate)
 endif
 
 # vim: ts=4 sw=4 noet fdm=marker

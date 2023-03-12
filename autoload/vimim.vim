@@ -5,7 +5,7 @@ vim9script
 #
 #   File Name     : vimim.vim
 #   Author        : Allan Downey<AllanDowney@126.com>
-#   Version       : 0.2
+#   Version       : 0.3
 #   Create        : 2023-02-28 23:18
 #   Last Modified : 2023-03-12 11:29
 #   Describe      : 
@@ -15,6 +15,7 @@ vim9script
 import autoload 'build.vim'
 
 var tabledict: dict<list<string>> = {}
+var impath: string = expand('<script>:p:h:h')
 
 const im_valid_keys = split('a b c d e f g h i j k l m n o p q r s t u v w x y z')
 const im_select_keys = [' ', ';', "'", ',', '5', '6', '7', '8', '9', '0']
@@ -58,7 +59,7 @@ highlight imBorder	ctermfg=250 ctermbg=Cyan guifg=#80A0FF guibg=#263A45
 highlight imCode	ctermfg=168 ctermbg=Cyan guifg=#DC657D guibg=#263A45
 
 export def LoadTable()
-	var ljson = expand('<script>:p:h:h') .. '/table/wubi86.json'
+	var ljson = impath .. '/table/wubi86.json'
 	if filereadable(ljson)
 		tabledict = js_decode(readfile(ljson)[0])
 	else
@@ -338,6 +339,63 @@ def TempEnglish(): string
 	# endif
 
     return v:char
+enddef
+
+export def CreateWords(swords: string): number
+	var lword: list<string> = split(swords, '\zs')
+	var lenword: number = len(lword)
+
+	var hftable = readfile(impath .. '/table/wubi86_dz.txt')
+	var lftable = readfile(impath .. '/table/wubi86_zh.txt')
+	var cftable = readfile(impath .. '/table/custom.txt')
+
+	var lcode: list<string> = []
+
+	for word in lword
+		var llline = match(hftable, "\t" .. word .. "\t")
+		if llline > 0
+			add(lcode, hftable[llline])
+		else
+			llline = match(lftable, "\t" .. word .. "\t", 704)
+			if llline > 0
+				add(lcode, lftable[llline])
+			endif
+		endif
+	endfor
+
+	map(lcode, (_, v) => split(v)[1] .. ' ' .. split(v)[2])
+
+	var lllcrt = ''
+	if lenword == 1
+		lllcrt = lcode[0]
+	elseif lenword == 2
+		lllcrt = lcode[0][: 1] .. lcode[1][: 1]
+	elseif lenword == 3
+		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][: 1]
+	elseif lenword == 4
+		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][0] .. lcode[3][0]
+	elseif lenword > 4
+		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][0] .. lcode[-1][0]
+	endif
+	
+	if match(hftable, "\t" .. swords .. "\t") > 0
+			|| match(lftable, "\t" .. swords .. "\t") > 0
+			|| match(cftable, "\t" .. swords .. "\t") > 0
+		echo 'Exits:' swords '  Code:' lllcrt
+		return -1
+	endif
+
+	var lntxt = len(lllcrt) .. "\t" .. lllcrt .. "\t" .. swords .. "\t400"
+	if has_key(tabledict, lllcrt)
+		tabledict[lllcrt]->add(swords)
+	else
+		tabledict[lllcrt] = [swords]
+	endif
+	
+	writefile([lntxt], expand(impath .. '/table/custom.txt'), 'a')
+
+	echo 'Added' lllcrt 'for' swords
+	return 0
 enddef
 
 #  vim: ts=4 sw=4 noet fdm=indent fdl=2
