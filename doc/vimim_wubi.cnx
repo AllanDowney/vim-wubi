@@ -5,6 +5,7 @@
     2.1 创建码表				|Vimim_ImBuild|
     2.2 编辑码表				|Vimim_ImEdit|
     2.3 自造词					|Vimim_ImCreate|
+    2.4 关闭输入法 				|Vimim_ImDisable|
 3. 快捷键					|Vimim_maps|
 4. 码表文件					|Vimim_table|
 5. 更新历史					|Vimim_history|
@@ -74,6 +75,9 @@ Vimim-wubi 是使用 |vim9script| 编写的五笔输入法，使用了 |InsertCh
 		首先从词库文本文件中查找是否已经存在该词，如果不存在，查找每个
 		字的编码，按五笔编码规则编码后，写入 "custom.txt" 文件中
 
+							*Vimim_ImDisable*
+`ImDisable` 关闭输入法
+
 						*Vimim_maps*
 3. 快捷键~
 
@@ -82,6 +86,10 @@ Vimim-wubi 是使用 |vim9script| 编写的五笔输入法，使用了 |InsertCh
 i_<Plug>(VimimStart)
 	插入模式下，开启五笔输入 >
 	inoremap  <Leader>im <Plug>(VimimStart)
+
+i_<Plug>(VimimToggle)
+	插入模式下，切换中英文状态 >
+	inoremap  <Leader>il <Plug>(VimimToggle)
 
 i_<Plug>(VimimStop)
 	插入模式下，关闭五笔输入 >
@@ -105,7 +113,9 @@ v_<Plug>(VimimCreate)
 
 码 表 文 件
 
+码表文件使用的是极爽词库 4.3 版。
 码表文件共有四个：
+
     - wubi86_dz.txt
 	全部简体中文单字四码码表，自动加载。
 	为日后自造词准备。

@@ -46,7 +46,6 @@ var popopt_wubi: dict<any> = {
 		borderchars: ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
 		borderhighlight: [ 'imBorder' ],
 		title: '五─CN',
-		padding: [0, 2, 0, 1],
 		zindex: 400,
 		wrap: false,
 		scrollbar: 0 }
@@ -54,6 +53,7 @@ var popopt_wubi: dict<any> = {
 var popid: number = -1
 var logoid: number = -1
 var vimim_enabled: bool = false
+var vimim_status: bool = true
 
 highlight imBorder	ctermfg=250 ctermbg=Cyan guifg=#80A0FF guibg=#263A45
 highlight imCode	ctermfg=168 ctermbg=Cyan guifg=#DC657D guibg=#263A45
@@ -96,15 +96,17 @@ export def Enable(): number
 	vimim_enabled = true
 	if vimimconfig.horizontal
 		popopt_wubi.maxheight = 1
+		popopt_wubi.padding = [0, 2, 0, 1]
 	else
 		popopt_wubi.maxheight = 12
+		popopt_wubi.padding = [0, 1, 0, 1]
 	endif
 
 	augroup Vimim_enable
 		autocmd!
 		autocmd InsertCharPre * call vimim#TableConvert()
-		autocmd ModeChanged i*:n* call vimim#Toggle(0)
-		autocmd ModeChanged n*:i* call vimim#Toggle(1)
+		autocmd ModeChanged i*:n* call vimim#Toggle()
+		autocmd ModeChanged n*:i* call vimim#Toggle()
 	augroup END
 
 	echo 'VIMIM ' vimim_enabled
@@ -115,15 +117,15 @@ export def Enable(): number
 	return 1
 enddef
 
-export def Toggle(stauts: number)
-	if !stauts
+export def Toggle()
+	if vimim_status
 		setlocal iminsert=0
 		setlocal iminsert?
 	else
 		setlocal iminsert=2
 		setlocal iminsert?
-
 	endif
+	vimim_status = !vimim_status
 enddef
 
 export def Disable()
@@ -180,9 +182,9 @@ enddef
 def ConvertStart(code: string): string
 	var lcode = code
 	if vimimconfig.horizontal
-		popid = popup_atcursor(GetCandidatesToString(lcode), popopt_wubi)
+		popid = popup_atcursor(GetCandidatesHorizontal(lcode), popopt_wubi)
 	else
-		popid = popup_atcursor(GetCandidates(lcode, v:true), popopt_wubi)
+		popid = popup_atcursor(GetCandidatesVertical(lcode), popopt_wubi)
 	endif
 	redraw
 
@@ -210,9 +212,9 @@ def ConvertStart(code: string): string
 		endif
 
 		if vimimconfig.horizontal
-			popup_settext(popid, GetCandidatesToString(lcode))
+			popup_settext(popid, GetCandidatesHorizontal(lcode))
 		else
-			popup_settext(popid, GetCandidates(lcode, v:true))
+			popup_settext(popid, GetCandidatesVertical(lcode))
 		endif
 		redraw
 	endwhile
@@ -252,31 +254,32 @@ def Finalize(code: string, chari: string): string
 	return v:char
 enddef
 
-def GetCandidates(code: string, padding: bool = v:false): list<string>
+def GetCandidates(code: string): list<string>
 	var lcand: list<string> = []
 
 	if code == ''
 		return lcand
-	endif
-
-	if has_key(tabledict, code)
-		lcand = tabledict[code]
 	elseif code == 'z'
 		lcand = [sprevword]
+	elseif has_key(tabledict, code)
+		lcand = tabledict[code]
 	endif
 
 	if len(lcand) > 10
 		lcand = lcand[: 9]
 	endif
 
-	return !padding ? lcand :
-		copy(lcand)->map((key, val) =>
-			printf('%d.%s', (key + 1) % 10, val))
-		->insert('-------')
+	return lcand
+enddef
+
+def GetCandidatesVertical(code: string): list<string>
+	return copy(GetCandidates(code))->map((key, val) =>
+			printf('%d. %s', (key + 1) % 10, val))
+		->insert('────────')
 		->insert(code)
 enddef
 
-def GetCandidatesToString(code: string): string
+def GetCandidatesHorizontal(code: string): string
 	return copy(GetCandidates(code))->map((key, val) =>
 			printf('%d.%s', (key + 1) % 10, val))
 		->insert(printf('%-4s', code))
@@ -377,24 +380,36 @@ export def CreateWords(swords: string): number
 	elseif lenword > 4
 		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][0] .. lcode[-1][0]
 	endif
-	
+
 	if match(hftable, "\t" .. swords .. "\t") > 0
 			|| match(lftable, "\t" .. swords .. "\t") > 0
 			|| match(cftable, "\t" .. swords .. "\t") > 0
-		echo 'Exits:' swords '  Code:' lllcrt
+		echohl WarningMsg
+		echo 'EXITS [' swords '] CODE [' lllcrt ']'
+		echohl END
 		return -1
 	endif
 
-	var lntxt = len(lllcrt) .. "\t" .. lllcrt .. "\t" .. swords .. "\t400"
-	if has_key(tabledict, lllcrt)
-		tabledict[lllcrt]->add(swords)
-	else
-		tabledict[lllcrt] = [swords]
-	endif
-	
-	writefile([lntxt], expand(impath .. '/table/custom.txt'), 'a')
+	echohl MoreMsg
+	echomsg 'Zhcode:' lcode ' Code:' lllcrt
+	echohl END
 
-	echo 'Added' lllcrt 'for' swords
+	echohl Question
+	var inyn = input('[ ' .. swords .. ' ] WITH [ ' .. lllcrt .. ' ] [Y/n]: ', 'y')
+	echohl END
+
+	if inyn ==? 'y' || inyn == ''
+		var lntxt = len(lllcrt) .. "\t" .. lllcrt .. "\t" .. swords .. "\t400"
+		if has_key(tabledict, lllcrt)
+			tabledict[lllcrt]->add(swords)
+		else
+			tabledict[lllcrt] = [swords]
+		endif
+
+		writefile([lntxt], expand(impath .. '/table/custom.txt'), 'a')
+
+		echo '  ADDED [' lllcrt '] FOR [' swords ']'
+	endif
 	return 0
 enddef
 

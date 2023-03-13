@@ -37,13 +37,18 @@ func WhFile(A, L, P)
 endfunc
 
 inoremap <Plug>(VimimStart) <Cmd>call vimim#Enable()<CR>
+inoremap <Plug>(VimimToggle) <Cmd>call vimim#Toggle()<CR>
 inoremap <Plug>(VimimStop) <Cmd>ImDisable<CR>
 nnoremap <Plug>(VimimStop) <Cmd>ImDisable<CR>
 nnoremap <Plug>(VimimEdit) <Cmd>ImEdit<CR>
-vnoremap <Plug>(VimimCreate) <Cmd>call vimim#CreateWords(expand('<cword>'))<CR>
+vnoremap <Plug>(VimimCreate) y:ImCreate <C-R>"<CR>
 
 if !hasmapto('<Plug>(VimimStart)', 'i')
 	inoremap  <Leader>im <Plug>(VimimStart)
+endif
+
+if !hasmapto('<Plug>(VimimToggle)', 'i')
+	inoremap  <Leader>il <Plug>(VimimToggle)
 endif
 
 if !hasmapto('<Plug>(VimimStop)', 'i')
