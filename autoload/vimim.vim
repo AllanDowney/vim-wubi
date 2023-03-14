@@ -428,6 +428,7 @@ export def CreateWords(swords: string): number
 			tabledict[lllcrt] = [swords]
 		endif
 
+		writefile([js_encode(tabledict)], expand(impath .. '/table/wubi86.json'))
 		writefile([lntxt], expand(impath .. '/table/custom.txt'), 'a')
 
 		echo '  ADDED [' lllcrt '] FOR [' swords ']'
