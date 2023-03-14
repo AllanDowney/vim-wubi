@@ -17,7 +17,7 @@ import autoload 'build.vim'
 var tabledict: dict<list<string>> = {}
 var impath: string = expand('<script>:p:h:h')
 
-const im_valid_keys = split('a b c d e f g h i j k l m n o p q r s t u v w x y z')
+const im_valid_keys = split('abcdefghijklmnopqrstuvwxyz', '\zs')
 const im_select_keys = [' ', ';', "'", ',', '5', '6', '7', '8', '9', '0']
 
 var vimimconfig: dict<any> = {
@@ -54,6 +54,7 @@ var popid: number = -1
 var logoid: number = -1
 var vimim_enabled: bool = false
 var vimim_status: bool = true
+var vimim_logo: list<string> = ['五', '。']
 
 highlight imBorder	ctermfg=250 ctermbg=Cyan guifg=#80A0FF guibg=#263A45
 highlight imCode	ctermfg=168 ctermbg=Cyan guifg=#DC657D guibg=#263A45
@@ -78,9 +79,13 @@ export def RebuildTable()
 enddef
 
 export def Enable(): number
-    setlocal iminsert=2
+	if vimimconfig.disable_chinese_punct
+		popopt_wubi.title = '五─EN'
+		vimim_logo[1] = '. '
+	endif
+
 	if vimimconfig.showlogo
-		logoid = popup_create('五笔', {
+		logoid = popup_create(vimim_logo->join(), {
 				line: winheight(0) - 1,
 				col: winwidth(0) - 10,
 				zindex: 300,
@@ -109,6 +114,7 @@ export def Enable(): number
 		autocmd ModeChanged n*:i* call vimim#Toggle()
 	augroup END
 
+    setlocal iminsert=2
 	echo 'VIMIM ' vimim_enabled
 
 	if exists(':CocDisable') == 2
@@ -121,11 +127,20 @@ export def Toggle()
 	if vimim_status
 		setlocal iminsert=0
 		setlocal iminsert?
+		vimim_logo[0] = 'EN'
 	else
-		setlocal iminsert=2
-		setlocal iminsert?
+		if mode() != 'n'
+			setlocal iminsert=2
+			setlocal iminsert?
+			vimim_logo[0] = '五'
+		endif
 	endif
 	vimim_status = !vimim_status
+
+	if logoid > 0
+		popup_settext(logoid, vimim_logo->join())
+		redraw
+	endif
 enddef
 
 export def Disable()
@@ -165,8 +180,15 @@ def PassThrough(chari: string): string
 		vimimconfig.disable_chinese_punct = !vimimconfig.disable_chinese_punct
 		if vimimconfig.disable_chinese_punct
 			popopt_wubi.title = '五─EN'
+			vimim_logo[1] = '. '
 		else
 			popopt_wubi.title = '五─CN'
+			vimim_logo[1] = '。'
+		endif
+
+		if logoid > 0
+			popup_settext(logoid, vimim_logo->join())
+			redraw
 		endif
 
 		v:char = ''
