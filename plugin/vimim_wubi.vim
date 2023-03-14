@@ -24,7 +24,7 @@ g:loaded_vimim_wubi = 1
 augroup Vimim
 	autocmd!
 	autocmd VimEnter * call vimim#LoadTable()
-    autocmd BufReadPre */table/*.txt setlocal ts=16 list
+    autocmd BufReadPre */table/*.txt setlocal ts=20 list
 augroup END
 
 command -nargs=0 ImBuild vimim#RebuildTable()
@@ -33,7 +33,7 @@ command -complete=custom,WhFile -nargs=? ImEdit build#EditTable(<q-args>)
 command -nargs=1 ImCreate vimim#CreateWords(<q-args>)
 
 func WhFile(A, L, P)
-	return "custom.txt\nwubi86_dz.txt\nwubi86_zh.txt"
+	return "custom.txt\nwubi86.txt\nwubi86_dz.txt"
 endfunc
 
 inoremap <Plug>(VimimStart) <Cmd>call vimim#Enable()<CR>

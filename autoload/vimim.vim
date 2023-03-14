@@ -359,10 +359,6 @@ def TempEnglish(): string
     popup_close(popid)
     popid = -1
 
-	# if vimimconfig.trim_english_word
-	# 	v:char = trim(v:char) .. ' '
-	# endif
-
     return v:char
 enddef
 
@@ -371,20 +367,15 @@ export def CreateWords(swords: string): number
 	var lenword: number = len(lword)
 
 	var hftable = readfile(impath .. '/table/wubi86_dz.txt')
-	var lftable = readfile(impath .. '/table/wubi86_zh.txt')
+	var lftable = readfile(impath .. '/table/wubi86.txt')
 	var cftable = readfile(impath .. '/table/custom.txt')
 
 	var lcode: list<string> = []
 
 	for word in lword
 		var llline = match(hftable, "\t" .. word .. "\t")
-		if llline > 0
+		if llline >= 0
 			add(lcode, hftable[llline])
-		else
-			llline = match(lftable, "\t" .. word .. "\t", 704)
-			if llline > 0
-				add(lcode, lftable[llline])
-			endif
 		endif
 	endfor
 
@@ -397,17 +388,22 @@ export def CreateWords(swords: string): number
 		lllcrt = lcode[0][: 1] .. lcode[1][: 1]
 	elseif lenword == 3
 		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][: 1]
-	elseif lenword == 4
-		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][0] .. lcode[3][0]
-	elseif lenword > 4
+	else
 		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][0] .. lcode[-1][0]
 	endif
 
-	if match(hftable, "\t" .. swords .. "\t") > 0
-			|| match(lftable, "\t" .. swords .. "\t") > 0
-			|| match(cftable, "\t" .. swords .. "\t") > 0
+	if match(hftable, "\t" .. swords .. "\t") >= 0
+			|| match(lftable, "\t" .. swords .. "\t") >= 0
+			|| match(cftable, "\t" .. swords .. "\t") >= 0
 		echohl WarningMsg
 		echo 'EXITS [' swords '] CODE [' lllcrt ']'
+		echohl END
+		return 0
+	endif
+
+	if len(lllcrt) < 1
+		echohl WarningMsg
+		echo 'No Code For [' swords ']'
 		echohl END
 		return -1
 	endif
@@ -421,7 +417,7 @@ export def CreateWords(swords: string): number
 	echohl END
 
 	if inyn ==? 'y' || inyn == ''
-		var lntxt = len(lllcrt) .. "\t" .. lllcrt .. "\t" .. swords .. "\t400"
+		var lntxt = len(lllcrt) .. "\t" .. lllcrt .. "\t" .. swords .. "\t9400"
 		if has_key(tabledict, lllcrt)
 			tabledict[lllcrt]->add(swords)
 		else
@@ -433,7 +429,7 @@ export def CreateWords(swords: string): number
 
 		echo '  ADDED [' lllcrt '] FOR [' swords ']'
 	endif
-	return 0
+	return 1
 enddef
 
 #  vim: ts=4 sw=4 noet fdm=indent fdl=2

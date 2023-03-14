@@ -13,14 +13,12 @@ vim9script
 # =========================================================
 
 const table_path = expand('<script>:p:h:h') .. '/table'
-const table_zh = table_path .. '/wubi86_zh.txt'
-const table_dz = table_path .. '/wubi86_dz.txt'
+const table_zh = table_path .. '/wubi86.txt'
 const table_tw = table_path .. '/wubi86_tw.txt'
 const table_custom = table_path .. '/custom.txt'
 
 export def BuildTable(): dict<list<string>>
-	echo 'Building tables...'
-	echo 'This may take a few seconds...'
+	echo 'Building tables.' 'This may take a few seconds...'
 
 	var table_dict = {}
 	var im_gb2312: bool = empty(g:->get('Vimim_config')) ? v:true :
@@ -29,7 +27,6 @@ export def BuildTable(): dict<list<string>>
 	var startt = reltime()
 
 	var ltable_dict = ReadToDict(table_zh)
-	ExtendD(ltable_dict, ReadToDict(table_dz))
 
 	if !im_gb2312
 		ExtendD(ltable_dict, ReadToDict(table_tw))
@@ -40,7 +37,6 @@ export def BuildTable(): dict<list<string>>
 
 		if !empty(ltable_cust)
 			ExtendD(ltable_dict, ltable_cust)
-			echo 'Extend custom table'
 		endif
 	}
 
@@ -48,10 +44,10 @@ export def BuildTable(): dict<list<string>>
 		sort(v, (a, b) => -(str2nr(a[1]) - str2nr(b[1])))
 		->mapnew((_, w) => w[0]))
 
-	echo 'All tables length: ' len(table_dict) 'type: ' typename(table_dict)
-	echo 'Done. in' reltimestr(reltime(startt)) .. 's.'
+	echo 'Done. in' reltimestr(reltime(startt)) .. 's.  '
+	echon 'Length:' len(table_dict)->printf('%6d')
 
-	var table_json = substitute(table_zh, '_zh.txt$', '.json', '')
+	var table_json = substitute(table_zh, 'txt$', 'json', '')
 	writefile([js_encode(table_dict)], table_json)
 
 	return table_dict
