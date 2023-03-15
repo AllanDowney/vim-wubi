@@ -18,7 +18,7 @@ const table_tw = table_path .. '/wubi86_tw.txt'
 const table_custom = table_path .. '/custom.txt'
 
 export def BuildTable(): dict<list<string>>
-	echo 'Building tables.' 'This may take a few seconds...'
+	echo '正在建立码表库，请稍候...'
 
 	var table_dict = {}
 	var im_gb2312: bool = empty(g:->get('Vimim_config')) ? v:true :
@@ -44,8 +44,8 @@ export def BuildTable(): dict<list<string>>
 		sort(v, (a, b) => -(str2nr(a[1]) - str2nr(b[1])))
 		->mapnew((_, w) => w[0]))
 
-	echo 'Done. in' reltimestr(reltime(startt)) .. 's.  '
-	echon 'Length:' len(table_dict)->printf('%6d')
+	echo '已完成。用时' reltimestr(reltime(startt)) .. 's.'
+	echon '  共计:' len(table_dict)->printf('%7d')
 
 	var table_json = substitute(table_zh, 'txt$', 'json', '')
 	writefile([js_encode(table_dict)], table_json)
@@ -67,7 +67,7 @@ def ReadToDict(txtfile: string): dict<list<list<string>>>
     endfor
 
 	var fname = fnamemodify(txtfile, ":t")
-	echo fname->printf('%16s') 'length:' len(table_dict)->printf('%6d')
+	echo fname->printf('%16s') '  计:' len(table_dict)->printf('%7d')
 	return table_dict
 enddef
 

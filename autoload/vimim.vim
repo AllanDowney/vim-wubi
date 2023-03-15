@@ -396,40 +396,78 @@ export def CreateWords(swords: string): number
 			|| match(lftable, "\t" .. swords .. "\t") >= 0
 			|| match(cftable, "\t" .. swords .. "\t") >= 0
 		echohl WarningMsg
-		echo 'EXITS [' swords '] CODE [' lllcrt ']'
+		echo '[' swords ']  编码  [' lllcrt ']'
 		echohl END
-		return 0
+
+		if lenword < 2
+			echohl WarningMsg
+			echon '  不能更改单字编码'
+			echohl END
+			return 0
+		endif
+
+		echohl Question
+		if input('是否自定义编码？(Y/N): ') ==? 'Y'
+			echohl END
+			return CustomCode(swords)
+		else
+			echohl END
+			echon '  已取消'
+			return -1
+		endif
 	endif
 
 	if len(lllcrt) < 1
-		echohl WarningMsg
-		echo 'No Code For [' swords ']'
-		echohl END
-		return -1
+		return CustomCode(swords)
 	endif
 
 	echohl MoreMsg
-	echomsg 'Zhcode:' lcode ' Code:' lllcrt
+	echomsg '五笔:' lcode ' 编码:' lllcrt
 	echohl END
 
 	echohl Question
-	var inyn = input('[ ' .. swords .. ' ] WITH [ ' .. lllcrt .. ' ] [Y/n]: ', 'y')
+	var inyn = input('[ ' .. swords .. ' ] 编码为 [ ' .. lllcrt .. ' ] [确定(Y)/自定义(S)/取消(N)]: ', 'Y')
 	echohl END
 
-	if inyn ==? 'y' || inyn == ''
-		var lntxt = len(lllcrt) .. "\t" .. lllcrt .. "\t" .. swords .. "\t9400"
-		if has_key(tabledict, lllcrt)
-			tabledict[lllcrt]->add(swords)
-		else
-			tabledict[lllcrt] = [swords]
-		endif
-
-		writefile([js_encode(tabledict)], expand(impath .. '/table/wubi86.json'))
-		writefile([lntxt], expand(impath .. '/table/custom.txt'), 'a')
-
-		echo '  ADDED [' lllcrt '] FOR [' swords ']'
+	if inyn ==? 'y'
+		return WriteToFile(lllcrt, swords)
+	elseif inyn ==? 's' || inyn ==? 'ys'
+		return CustomCode(swords)
+	else
+		return -1
 	endif
+enddef
+
+def WriteToFile(lllcrt: string, swords: string): number
+	var lntxt = len(lllcrt) .. "\t" .. lllcrt .. "\t" .. swords .. "\t1400"
+	if has_key(tabledict, lllcrt)
+		tabledict[lllcrt]->add(swords)
+	else
+		tabledict[lllcrt] = [swords]
+	endif
+
+	writefile([js_encode(tabledict)], expand(impath .. '/table/wubi86.json'))
+	writefile([lntxt], expand(impath .. '/table/custom.txt'), 'a')
+
+	echo '  已加入编码 [' lllcrt  swords ']'
 	return 1
+enddef
+
+def CustomCode(swords: string): number
+	var sllcrt: string = ''
+	while len(sllcrt) != 4
+		echohl Question
+		sllcrt = input('自定义编码(小写字母) [ ' .. swords .. ' ] [取消(N)]: ')
+		echohl END
+
+		if len(sllcrt) == 4
+			return WriteToFile(sllcrt->tolower(), swords)
+		elseif sllcrt ==# 'N'
+			echo '  已取消'
+			return -1
+		endif
+	endwhile
+	return 0
 enddef
 
 #  vim: ts=4 sw=4 noet fdm=indent fdl=2
