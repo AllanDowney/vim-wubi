@@ -25,6 +25,7 @@ var vimimconfig: dict<any> = {
 	gb2312: true,
 	showlogo: true,
 	temp_english_key: '`',
+	extend_candidates: true,
 	disable_chinese_punct: false,
 	toggle_chinese_punct: "\<C-l>",
 	chinese_puncts: {
@@ -264,9 +265,9 @@ def Finalize(code: string, chari: string): string
 
 		var lidx = index(im_select_keys, chari)
 		if lidx < 0 || lidx >= len(lcand)
-			v:char = get(lcand, 0, '') .. HandlePunct(chari)
+			v:char = get(lcand[0], 0, '') .. HandlePunct(chari)
 		else
-			v:char = lcand[lidx]
+			v:char = lcand[lidx][0]
 		endif
 
 		sprevword = v:char
@@ -275,15 +276,27 @@ def Finalize(code: string, chari: string): string
 	return v:char
 enddef
 
-def GetCandidates(code: string): list<string>
-	var lcand: list<string> = []
+def GetCandidates(code: string): list<list<string>>
+	var lcand: list<list<string>> = []
 
 	if code == ''
 		return lcand
 	elseif code == 'z'
-		lcand = [sprevword]
+		lcand = [[sprevword, '']]
 	elseif has_key(tabledict, code)
-		lcand = tabledict[code]
+		for value in tabledict[code]
+			lcand->add([value, ''])
+		endfor
+	endif
+
+	if vimimconfig.extend_candidates
+		if len(code) < 4
+			for exchar in im_valid_keys[: -2]
+				if has_key(tabledict, code .. exchar)
+					lcand->add([tabledict[code .. exchar][0], exchar])
+				endif
+			endfor
+		endif
 	endif
 
 	if len(lcand) > 10
@@ -294,15 +307,15 @@ def GetCandidates(code: string): list<string>
 enddef
 
 def GetCandidatesVertical(code: string): list<string>
-	return copy(GetCandidates(code))->map((key, val) =>
-			printf('%d. %s', (key + 1) % 10, val))
+	return copy(GetCandidates(code))->mapnew((key, val) =>
+			printf('%d. %s%s', (key + 1) % 10, val[0], val[1]))
 		->insert('────────')
 		->insert(code)
 enddef
 
 def GetCandidatesHorizontal(code: string): string
-	return copy(GetCandidates(code))->map((key, val) =>
-			printf('%d.%s', (key + 1) % 10, val))
+	return copy(GetCandidates(code))->mapnew((key, val) =>
+			printf('%d.%s%s', (key + 1) % 10, val[0], val[1]))
 		->insert(printf('%-4s', code))
 		->join('  ')
 enddef
