@@ -66,11 +66,6 @@ export def LoadTable()
 	else
 		tabledict = build.BuildTable()
 	endif
-
-	if !empty(g:->get('Vimim_config'))
-		extend(vimimconfig, g:Vimim_config, "force")
-	endif
-
 enddef
 
 export def RebuildTable()
@@ -79,6 +74,10 @@ export def RebuildTable()
 enddef
 
 export def Enable(): number
+	if !empty(g:->get('Vimim_config'))
+		extend(vimimconfig, g:Vimim_config, "force")
+	endif
+
 	if vimimconfig.disable_chinese_punct
 		popopt_wubi.title = '五─EN'
 		vimim_logo[1] = '. '
