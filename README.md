@@ -21,6 +21,7 @@
 | Vim9script        |   9.0    |
 
 ### 安装
+vim-plug:
 
 ```vimscript
 Plug 'AllanDowney/vim-wubi'
@@ -29,7 +30,7 @@ Plug 'AllanDowney/vim-wubi'
 也可 `git clone` 到 `$HOME/.vim/pack/edit/opt` 下，在 `.vimrc` 中加上
 
 ```vimscript
-packadd vim-wubi
+packadd vim-wubi | ImBuild
 ```
 
 如果想禁用插件，只需注释掉 `packadd` 这一行。
@@ -37,7 +38,7 @@ packadd vim-wubi
 ## 已实现的功能
 
 1. 支持分号(;)、撇号(')、逗号(,) 次选、三选、四选
-2. 支持中英文标点切换(<C-l>)，按键可配置
+2. 支持中英文标点切换(\<C-l>)，按键可配置
 3. 临时英文输入(\`)，按键可配置
 4. 支持 `z` 键重复最后一次输入
 5. 回车可用于编码上屏
