@@ -391,9 +391,9 @@ export def CreateWords(swords: string): number
 		lllcrt = lcode[0][0] .. lcode[1][0] .. lcode[2][0] .. lcode[-1][0]
 	endif
 
-	if match(hftable, "\t" .. swords .. "\t") >= 0
-			|| match(lftable, "\t" .. swords .. "\t") >= 0
+	if match(lftable, "\t" .. swords .. "\t") >= 0
 			|| match(cftable, "\t" .. swords .. "\t") >= 0
+			|| match(hftable, "\t" .. swords .. "\t") >= 0
 		echohl WarningMsg
 		echo '[' swords ']  编码  [' lllcrt ']'
 		echohl END
