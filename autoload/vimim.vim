@@ -409,21 +409,21 @@ export def CreateWords(swords: string): number
 			|| match(hftable, "\t" .. swords .. "\t") >= 0
 		echohl WarningMsg
 		echo '[' swords ']  编码  [' lllcrt ']'
-		echohl END
+		echohl None
 
 		if lenword < 2
 			echohl WarningMsg
 			echon '  不能更改单字编码'
-			echohl END
+			echohl None
 			return 0
 		endif
 
 		echohl Question
 		if input('是否自定义编码？(Y/N): ') ==? 'Y'
-			echohl END
+			echohl None
 			return CustomCode(swords)
 		else
-			echohl END
+			echohl None
 			echon '  已取消'
 			return -1
 		endif
@@ -435,11 +435,11 @@ export def CreateWords(swords: string): number
 
 	echohl MoreMsg
 	echomsg '五笔:' lcode ' 编码:' lllcrt
-	echohl END
+	echohl None
 
 	echohl Question
 	var inyn = input('[ ' .. swords .. ' ] 编码为 [ ' .. lllcrt .. ' ] [确定(Y)/自定义(S)/取消(N)]: ', 'Y')
-	echohl END
+	echohl None
 
 	if inyn ==? 'y'
 		return WriteToFile(lllcrt, swords)
@@ -470,7 +470,7 @@ def CustomCode(swords: string): number
 	while len(sllcrt) != 4
 		echohl Question
 		sllcrt = input('自定义编码(小写字母) [ ' .. swords .. ' ] [取消(N)]: ')
-		echohl END
+		echohl None
 
 		if len(sllcrt) == 4
 			return WriteToFile(sllcrt->tolower(), swords)
