@@ -148,6 +148,8 @@ export def Disable()
 		popup_clear()
 		setlocal iminsert=0
 		vimim_enabled = false
+		vimim_status = true
+		vimim_logo = ['五', '。']
 		logoid = -1
 		popid = -1
 		augroup Vimim_enable
