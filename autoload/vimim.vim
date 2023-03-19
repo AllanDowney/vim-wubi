@@ -17,7 +17,7 @@ import autoload 'build.vim'
 var tabledict: dict<list<string>> = {}
 var impath: string = expand('<script>:p:h:h')
 
-const im_valid_keys = split('abcdefghijklmnopqrstuvwxyz', '\zs')
+const im_valid_keys = split('gfdsahjklmtrewqyuiopnbvcxz', '\zs')
 const im_select_keys = [' ', ';', "'", ',', '5', '6', '7', '8', '9', '0']
 
 var vimimconfig: dict<any> = {
@@ -25,7 +25,7 @@ var vimimconfig: dict<any> = {
 	gb2312: true,
 	showlogo: true,
 	temp_english_key: '`',
-	extend_candidates: true,
+	extend_candidates: false,
 	disable_chinese_punct: false,
 	toggle_chinese_punct: "\<C-l>",
 	chinese_puncts: {
@@ -79,6 +79,13 @@ export def Enable(): number
 		extend(vimimconfig, g:Vimim_config, "force")
 	endif
 
+	var old_value: bool = vimimconfig.horizontal
+	if vimimconfig.extend_candidates
+		vimimconfig.horizontal = false
+	else
+		vimimconfig.horizontal = old_value
+	endif
+
 	if vimimconfig.disable_chinese_punct
 		popopt_wubi.title = '五─EN'
 		vimim_logo[1] = '. '
@@ -103,7 +110,7 @@ export def Enable(): number
 		popopt_wubi.maxheight = 1
 		popopt_wubi.padding = [0, 2, 0, 1]
 	else
-		popopt_wubi.maxheight = 12
+		popopt_wubi.maxheight = 32
 		popopt_wubi.padding = [0, 1, 0, 1]
 	endif
 
@@ -284,15 +291,15 @@ def GetCandidates(code: string): list<list<string>>
 	if code == ''
 		return lcand
 	elseif code == 'z'
-		lcand = [[sprevword, '']]
+		lcand = [[sprevword, ' ']]
 	elseif has_key(tabledict, code)
 		for value in tabledict[code]
-			lcand->add([value, ''])
+			lcand->add([value, ' '])
 		endfor
 	endif
 
 	if vimimconfig.extend_candidates
-		if len(code) < 4
+		if len(code) == 2 || len(code) == 3
 			for exchar in im_valid_keys[: -2]
 				if has_key(tabledict, code .. exchar)
 					lcand->add([tabledict[code .. exchar][0], exchar])
@@ -301,8 +308,10 @@ def GetCandidates(code: string): list<list<string>>
 		endif
 	endif
 
-	if len(lcand) > 10
-		lcand = lcand[: 9]
+	if vimimconfig.horizontal
+		if len(lcand) > 10
+			lcand = lcand[: 9]
+		endif
 	endif
 
 	return lcand
@@ -310,9 +319,9 @@ enddef
 
 def GetCandidatesVertical(code: string): list<string>
 	return copy(GetCandidates(code))->mapnew((key, val) =>
-			printf('%d. %s%s', (key + 1) % 10, val[0], val[1]))
-		->insert('────────')
-		->insert(code)
+			printf('%2d. %s %s', (key + 1) % 100, val[1], val[0]))
+		->insert('──────────')
+		->insert(' ' .. code)
 enddef
 
 def GetCandidatesHorizontal(code: string): string
