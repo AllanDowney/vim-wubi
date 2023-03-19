@@ -335,6 +335,12 @@ def HandlePunct(chari: string): string
 	if vimimconfig.disable_chinese_punct ||
 			!has_key(vimimconfig.chinese_puncts, chari)
 		return chari
+	elseif chari == '.'
+		if split(getline('.'), '\zs')[-1] =~ '\d'
+			return '.'
+		else
+			return vimimconfig.chinese_puncts[chari]
+		endif
 	else
 		return vimimconfig.chinese_puncts[chari]
 	endif
