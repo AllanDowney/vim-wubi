@@ -5,7 +5,7 @@ vim9script
 #
 #   File Name     : vimim.vim
 #   Author        : Allan Downey<AllanDowney@126.com>
-#   Version       : 0.3
+#   Version       : 0.4
 #   Create        : 2023-02-28 23:18
 #   Last Modified : 2023-03-12 11:29
 #   Describe      : 

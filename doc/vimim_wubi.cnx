@@ -26,6 +26,7 @@ Vimim-wubi 是使用 |vim9script| 编写的五笔输入法，使用了 |InsertCh
 	5. 回车可用于编码上屏
 	6. 支持自造词
 	7. 支持候选栏扩展显示
+	8. 数字后使用英文 "."
 
 							*g:Vimim_config*
 1. 配置~
@@ -36,13 +37,13 @@ Vimim-wubi 是使用 |vim9script| 编写的五笔输入法，使用了 |InsertCh
 	    gb2312: true,
 	    showlogo: true,
 	    temp_english_key: '`',
-	    extend_candidates: true,
+	    extend_candidates: false,
 	    disable_chinese_punct: false,
 	    toggle_chinese_punct: "\<C-l>",
 	}
 
 "horizontal"			布尔型 (缺省：开启)
-		侯选栏使用横排，高度为 1 行。关闭时，使用竖排，最高 12 行
+		侯选栏使用横排，高度为 1 行。关闭时，使用竖排，最高 32 行
 
 "gb2312"			布尔型 (缺省：开启)
 		关闭时，词库加载繁体中文。默认不加载
@@ -53,8 +54,8 @@ Vimim-wubi 是使用 |vim9script| 编写的五笔输入法，使用了 |InsertCh
 "temp_english_key"		字符串 (缺省：'`')
 		临时英文，回车后返回中文状态
 
-"extend_candidates"		布尔型 (缺省：开启)
-		键码不足四位时，扩展显示候选词
+"extend_candidates"		布尔型 (缺省：关闭)
+		键码两位和三位时，扩展显示候选词。开启时，自动使用竖排侯选栏
 
 "disable_chinese_punct"		布尔型 (缺省：关闭)
 		默认使用中文标点，开启后，使用英文标点
@@ -148,6 +149,9 @@ v_<Plug>(VimimCreate)
 
 							*Vimim-History*
 5. 更新历史~
+2023-03-20 v0.4:
+	1. 数字后自动使用英文 "."
+
 2023-03-16:
 	1. 增加了候选栏扩展显示
 
