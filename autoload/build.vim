@@ -15,7 +15,6 @@ vim9script
 const table_path = expand('<script>:p:h:h') .. '/table'
 const table_zh = table_path .. '/wubi86.txt'
 const table_tw = table_path .. '/wubi86_tw.txt'
-const table_custom = table_path .. '/custom.txt'
 
 export def BuildTable(): dict<list<string>>
 	echo '正在建立码表库，请稍候...'
@@ -33,7 +32,7 @@ export def BuildTable(): dict<list<string>>
 	endif
 
 	{
-		var ltable_cust = ReadToDict(table_custom)
+		var ltable_cust = ReadToDict(g:vimim_table_custom)
 
 		if !empty(ltable_cust)
 			ExtendD(ltable_dict, ltable_cust)
@@ -84,12 +83,18 @@ def ExtendD(base: dict<list<list<string>>>, secondd: dict<list<list<string>>>):
 	return base
 enddef
 
-export def EditTable(TxtFile: string)
-	var lfile = TxtFile
-	if TxtFile == ''
-		lfile = 'custom.txt'
+export def EditTable(txt: string)
+	var lfile = txt
+	if txt == 'wubi86_dz'
+		lfile = table_path .. '/wubi86_dz.txt'
+	elseif txt == 'wubi86'
+		lfile = table_zh
+	elseif txt == '' || txt == 'custom'
+		lfile = g:vimim_table_custom
+	else
+		lfile = g:vimim_table_custom
 	endif
-	execute 'tabedit ' .. table_path .. '/' .. lfile
+	execute 'tabedit ' .. lfile
 enddef
 
 #  vim: ts=4 sw=4 noet fdm=indent

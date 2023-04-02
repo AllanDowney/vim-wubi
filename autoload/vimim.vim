@@ -397,7 +397,7 @@ export def CreateWords(swords: string): number
 
 	var hftable = readfile(impath .. '/table/wubi86_dz.txt')
 	var lftable = readfile(impath .. '/table/wubi86.txt')
-	var cftable = readfile(impath .. '/table/custom.txt')
+	var cftable = readfile(g:vimim_table_custom)
 
 	var lcode: list<string> = []
 
@@ -460,7 +460,7 @@ export def CreateWords(swords: string): number
 	echohl None
 
 	echohl Question
-	var inyn = input('[ ' .. swords .. ' ] 编码为 [ ' .. lllcrt .. ' ] [确定(Y)/自定义(S)/取消(N)]: ', 'Y')
+	var inyn = input('确定(Y)/自定义(S)/取消(N): ', 'Y')
 	echohl None
 
 	if inyn ==? 'y'
@@ -481,9 +481,9 @@ def WriteToFile(lllcrt: string, swords: string): number
 	endif
 
 	writefile([js_encode(tabledict)], expand(impath .. '/table/wubi86.json'))
-	writefile([lntxt], expand(impath .. '/table/custom.txt'), 'a')
+	writefile([lntxt], g:vimim_table_custom, 'a')
 
-	echo '  已加入编码 [' lllcrt  swords ']'
+	echo '  已加入'
 	return 1
 enddef
 
@@ -491,7 +491,7 @@ def CustomCode(swords: string, lcrt: string): number
 	var sllcrt: string = ''
 	while len(sllcrt) < 1 || len(sllcrt) > 4
 		echohl Question
-		sllcrt = input('自定义编码(小写字母) [ ' .. swords .. ' ] [取消(N)]: ')
+		sllcrt = input('自定义编码(小写字母) [取消(N)]: ')
 		echohl None
 
 		if len(sllcrt) < 5 && sllcrt !=# lcrt && sllcrt =~# '\l\{1,4}'

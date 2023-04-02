@@ -21,6 +21,11 @@ endif
 
 g:loaded_vimim_wubi = 1
 
+if !exists('g:vimim_table_custom') ||
+		!filereadable(g:vimim_table_custom)
+	g:vimim_table_custom = expand('~/.vim/table/custom.txt')
+endif
+
 augroup Vimim
 	autocmd!
 	autocmd VimEnter * call vimim#LoadTable()
@@ -33,7 +38,7 @@ command -complete=custom,WhFile -nargs=? ImEdit build#EditTable(<q-args>)
 command -nargs=1 ImCreate vimim#CreateWords(<q-args>)
 
 func WhFile(A, L, P)
-	return "custom.txt\nwubi86.txt\nwubi86_dz.txt"
+	return "custom\nwubi86\nwubi86_dz"
 endfunc
 
 inoremap <Plug>(VimimStart) <Cmd>call vimim#Enable()<CR>
