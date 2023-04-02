@@ -125,7 +125,7 @@ export def Enable(): number
 	echo 'VIMIM ' vimim_enabled
 
 	if exists(':CocDisable') == 2
-		CocDisable
+		execute 'silent! CocDisable'
 	endif
 	return 1
 enddef
@@ -168,7 +168,7 @@ export def Disable()
 	endif
 
 	if exists(':CocEnable') == 2
-		CocEnable
+		execute 'silent! CocEnable'
 	endif
 enddef
 
@@ -405,6 +405,11 @@ export def CreateWords(swords: string): number
 		var llline = match(hftable, "\t" .. word .. "\t")
 		if llline >= 0
 			add(lcode, hftable[llline])
+		else
+			echohl ErrorMsg
+			echo '[' word '] 没有编码！'
+			echohl None
+			return -1
 		endif
 	endfor
 
@@ -438,7 +443,7 @@ export def CreateWords(swords: string): number
 		echohl Question
 		if input('是否自定义编码？(Y/N): ') ==? 'Y'
 			echohl None
-			return CustomCode(swords)
+			return CustomCode(swords, lllcrt)
 		else
 			echohl None
 			echon '  已取消'
@@ -447,7 +452,7 @@ export def CreateWords(swords: string): number
 	endif
 
 	if len(lllcrt) < 1
-		return CustomCode(swords)
+		return CustomCode(swords, lllcrt)
 	endif
 
 	echohl MoreMsg
@@ -461,7 +466,7 @@ export def CreateWords(swords: string): number
 	if inyn ==? 'y'
 		return WriteToFile(lllcrt, swords)
 	elseif inyn ==? 's' || inyn ==? 'ys'
-		return CustomCode(swords)
+		return CustomCode(swords, lllcrt)
 	else
 		return -1
 	endif
@@ -482,14 +487,14 @@ def WriteToFile(lllcrt: string, swords: string): number
 	return 1
 enddef
 
-def CustomCode(swords: string): number
+def CustomCode(swords: string, lcrt: string): number
 	var sllcrt: string = ''
-	while len(sllcrt) != 4
+	while len(sllcrt) < 1 || len(sllcrt) > 4
 		echohl Question
 		sllcrt = input('自定义编码(小写字母) [ ' .. swords .. ' ] [取消(N)]: ')
 		echohl None
 
-		if len(sllcrt) == 4
+		if len(sllcrt) < 5 && sllcrt !=# lcrt && sllcrt =~# '\l\{1,4}'
 			return WriteToFile(sllcrt->tolower(), swords)
 		elseif sllcrt ==# 'N'
 			echo '  已取消'
