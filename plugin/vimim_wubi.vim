@@ -44,7 +44,7 @@ nnoremap <Plug>(VimimEdit) <Cmd>ImEdit<CR>
 vnoremap <Plug>(VimimCreate) y:ImCreate <C-R>"<CR>
 
 if !hasmapto('<Plug>(VimimStart)', 'i')
-	inoremap  <Leader>im <Plug>(VimimStart)
+	inoremap  <Leader>ii <Plug>(VimimStart)
 endif
 
 if !hasmapto('<Plug>(VimimToggle)', 'i')
@@ -52,7 +52,7 @@ if !hasmapto('<Plug>(VimimToggle)', 'i')
 endif
 
 if !hasmapto('<Plug>(VimimStop)', 'i')
-	inoremap  <Leader>in <Plug>(VimimStop)
+	inoremap  <Leader>im <Plug>(VimimStop)
 endif
 
 if !hasmapto('<Plug>(VimimStop)', 'n')

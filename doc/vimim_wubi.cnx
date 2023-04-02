@@ -90,7 +90,7 @@ Vimim-wubi 是使用 |vim9script| 编写的五笔输入法，使用了 |InsertCh
 
 i_<Plug>(VimimStart)
 	插入模式下，开启五笔输入 >
-	inoremap  <Leader>im <Plug>(VimimStart)
+	inoremap  <Leader>ii <Plug>(VimimStart)
 
 i_<Plug>(VimimToggle)
 	插入模式下，切换中英文状态 >
@@ -98,7 +98,7 @@ i_<Plug>(VimimToggle)
 
 i_<Plug>(VimimStop)
 	插入模式下，关闭五笔输入 >
-	inoremap  <Leader>in <Plug>(VimimStop)
+	inoremap  <Leader>im <Plug>(VimimStop)
 
 n_<Plug>(VimimStop)
 	普通模式下，关闭五笔输入 >
