@@ -12,18 +12,25 @@ vim9script
 #
 # =========================================================
 
-if g:->get('loaded_vimim_wubi')
+if v:version < 900
+	echoerr "[vimim_wubi] Error: 需要 Vim-9.0 以上版本."
 	finish
-elseif v:version < 900
-	echoerr "Error: 需要 Vim-9.0 以上版本."
+endif
+
+if g:->get('loaded_vimim_wubi')
 	finish
 endif
 
 g:loaded_vimim_wubi = 1
 
-if !exists('g:vimim_table_custom') ||
-		!filereadable(g:vimim_table_custom)
-	g:vimim_table_custom = expand('~/.vim/table/custom.txt')
+if !isdirectory(expand('~/.vim/table'))
+	mkdir(expand('~/.vim/table'), 'p')
+endif
+
+g:vimim_table_custom = expand('~/.vim/table/custom.txt')
+
+if !filereadable(g:vimim_table_custom)
+	writefile([], g:vimim_table_custom)
 endif
 
 augroup Vimim

@@ -12,7 +12,7 @@ vim9script
 #
 # =========================================================
 
-import autoload 'build.vim'
+import autoload './build.vim'
 
 var tabledict: dict<list<string>> = {}
 var impath: string = expand('<script>:p:h:h')
@@ -433,15 +433,15 @@ export def CreateWords(swords: string): number
 		echo '[' swords ']  编码  [' lllcrt ']'
 		echohl None
 
-		if lenword < 2
-			echohl WarningMsg
-			echon '  不能更改单字编码'
-			echohl None
-			return 0
-		endif
+		# if lenword < 2
+		# 	echohl WarningMsg
+		# 	echon '  不能更改单字编码'
+		# 	echohl None
+		# 	return 0
+		# endif
 
 		echohl Question
-		if input('是否自定义编码？(Y/N): ') ==? 'Y'
+		if input('是否自定义编码？(Y/n): ', 'Y') ==? 'Y'
 			echohl None
 			return CustomCode(swords, lllcrt)
 		else
