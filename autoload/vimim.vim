@@ -23,7 +23,7 @@ const im_select_keys = [' ', ';', "'", ',', '5', '6', '7', '8', '9', '0']
 var vimimconfig: dict<any> = {
 	horizontal: true,
 	gb2312: true,
-	showlogo: true,
+	showlogo: false,
 	temp_english_key: '`',
 	extend_candidates: false,
 	disable_chinese_punct: false,
@@ -120,6 +120,10 @@ export def Enable(): number
 		autocmd ModeChanged i*:n* call vimim#Toggle()
 		autocmd ModeChanged n*:i* call vimim#Toggle()
 	augroup END
+
+	if empty(tabledict)
+		LoadTable()
+	endif
 
     setlocal iminsert=2
 	echo 'VIMIM ' vimim_enabled
