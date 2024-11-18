@@ -56,27 +56,27 @@ nnoremap <Plug>(VimimEdit) <Cmd>ImEdit<CR>
 vnoremap <Plug>(VimimCreate) y:ImCreate <C-R>"<CR>
 
 if !hasmapto('<Plug>(VimimStart)', 'i')
-	inoremap  <Leader>ii <Plug>(VimimStart)
+	imap  <Leader>ii <Plug>(VimimStart)
 endif
 
 if !hasmapto('<Plug>(VimimToggle)', 'i')
-	inoremap  <Leader>il <Plug>(VimimToggle)
+	imap  <Leader>il <Plug>(VimimToggle)
 endif
 
 if !hasmapto('<Plug>(VimimStop)', 'i')
-	inoremap  <Leader>im <Plug>(VimimStop)
+	imap  <Leader>im <Plug>(VimimStop)
 endif
 
 if !hasmapto('<Plug>(VimimStop)', 'n')
-	nnoremap  <Leader>im <Plug>(VimimStop)
+	nmap  <Leader>im <Plug>(VimimStop)
 endif
 
 if !hasmapto('<Plug>(VimimEdit)', 'n')
-	nnoremap <Leader>ie <Plug>(VimimEdit)
+	nmap <Leader>ie <Plug>(VimimEdit)
 endif
 
 if !hasmapto('<Plug>(VimimCreate)', 'v')
-	vnoremap  <Leader>ic <Plug>(VimimCreate)
+	vmap  <Leader>ic <Plug>(VimimCreate)
 endif
 
 # vim: ts=4 sw=4 noet fdm=marker
